@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FATAKDO — Beautiful Animated T‑Shirts + 3D Try‑On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <!-- Prevent duplicate injection of try-on styles from JS (we include them in style.css) -->
+  <style id="tryon-styles"></style>
+</head>
+<body>
+  <!-- Floating Background Blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <div class="container nav">
+     <a href="#" class="brand">
+  <img src="https://fatakdo.com/wp-content/uploads/2025/05/Logo-Horizontal-white.png" 
+       alt="Aurora Tees Logo" 
+       class="brand-logo" />
+</a>
+
+      <nav class="menu">
+        <a href="#shop">Shop</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="actions">
+        <button id="cart-button" class="cart-button" aria-label="Open cart">
+          <span class="cart-icon" aria-hidden="true">🛒</span>
+          <span id="cart-count" class="badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <p class="eyebrow">New drop just in</p>
+        <h1>
+          Wear <span class="gradient-text">art</span>.
+          Be <span id="typed" class="typed"></span>
+        </h1>
+        <p class="sub">
+          Premium cotton tees with original designs and motion-ink prints — made to turn heads.
+        </p>
+        <div class="cta">
+          <a href="#shop" class="btn primary">Shop now</a>
+          <a href="#about" class="btn ghost">Learn more</a>
+        </div>
+        <p class="hero-meta">Add a tee to your cart to unlock 3D Try‑On with your photo.</p>
+      </div>
+      <div class="hero-visual">
+        <div class="preview-stack">
+          <div class="preview-card p1"></div>
+          <div class="preview-card p2"></div>
+          <div class="preview-card p3"></div>
+        </div>
+      </div>
+    </div>
+    <button class="scroll-indicator" aria-label="Scroll to shop" onclick="document.querySelector('#shop').scrollIntoView({behavior:'smooth'})">⌄</button>
+  </section>
+
+  <!-- Shop -->
+  <main id="shop" class="shop">
+    <div class="container">
+      <div class="toolbar">
+        <div class="filters" id="filters">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="minimal">Minimal</button>
+          <button class="chip" data-filter="abstract">Abstract</button>
+          <button class="chip" data-filter="nature">Nature</button>
+          <button class="chip" data-filter="retro">Retro</button>
+          <button class="chip" data-filter="demo">Demo</button>
+        </div>
+        <div class="search">
+          <input type="search" id="search" placeholder="Search tees..." />
+        </div>
+      </div>
+
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <!-- Banner -->
+  <section class="banner">
+    <div class="container">
+      <div class="banner-card">
+        <span class="emoji">🧍🏻‍♂️</span>
+        <p>3D Try‑On: add any tee to cart, then tap “Try on” to preview on an avatar with your photo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="about">
+    <div class="container footer-grid">
+      <div>
+        <h4>Aurora Tees</h4>
+        <p>Design-led apparel made with sustainable materials and silky-soft cotton.</p>
+      </div>
+      <div>
+        <h5>Links</h5>
+        <ul>
+          <li><a href="#shop">Shop</a></li>
+          <li><a href="#about">About us</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div id="contact">
+        <h5>Newsletter</h5>
+        <p>Get drops, deals, and design stories.</p>
+        <form onsubmit="event.preventDefault(); alert('Thanks for subscribing!')">
+          <input type="email" placeholder="you@example.com" required />
+          <button class="btn primary small">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="container footnote">
+      <p>© <span id="year"></span> Aurora Tees. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Cart Drawer -->
+  <aside class="cart-drawer" id="cart" aria-hidden="true" aria-labelledby="cart-title" role="dialog">
+    <div class="cart-header">
+      <h3 id="cart-title">Your cart</h3>
+      <button id="close-cart" class="icon-btn" aria-label="Close cart">✕</button>
+    </div>
+    <div id="cart-items" class="cart-items"></div>
+    <div class="cart-summary">
+      <div class="row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$0.00</span>
+      </div>
+      <div class="row small">
+        <span>Shipping</span>
+        <span id="cart-shipping">Calculated at checkout</span>
+      </div>
+      <div class="row total">
+        <span>Total</span>
+        <span id="cart-total">$0.00</span>
+      </div>
+      <button id="checkout" class="btn primary full">Checkout</button>
+    </div>
+  </aside>
+  <div id="overlay" class="overlay" tabindex="-1" aria-hidden="true"></div>
+
+  <!-- Template for product cards -->
+  <template id="product-card-template">
+    <div class="card reveal">
+      <div class="media">
+        <div class="art"></div>
+        <div class="shine"></div>
+        <button class="fav" aria-label="Add to wishlist" title="Add to wishlist">❤</button>
+        <div class="badge new">New</div>
+      </div>
+      <div class="info">
+        <div class="topline">
+          <h3 class="title"></h3>
+          <span class="price"></span>
+        </div>
+        <p class="meta"></p>
+        <div class="swatches"></div>
+        <div class="actions-row">
+          <button class="btn add">Add to cart</button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="script.js" defer></script>
+</body>
+</html>
